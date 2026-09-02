@@ -1,0 +1,83 @@
+como publicar en Render un api rest hecho con spring boot
+
+
+Si tu API REST Spring Boot ya está en GitHub, desplegarla en Render es bastante sencillo. La forma más fiable actualmente es mediante Docker, conectando Render directamente a tu repositorio Git.
+
+1. Genera el JAR de Spring Boot
+Maven
+mvn clean package
+
+Esto generará un archivo .jar ejecutable de tu aplicación Spring Boot.
+
+2. Crea un archivo Dockerfile
+
+En la raíz del proyecto:
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","app.jar"]
+
+Render detectará el Dockerfile y construirá la imagen automáticamente.
+
+3. Configura el puerto para Render
+
+Asegúrate de que Spring Boot utilice el puerto que Render proporciona mediante la variable PORT.
+
+En application.properties:
+server.port=${PORT:8080}
+
+Así funcionará tanto en local como en Render.
+
+4. Sube el código a GitHub
+git add .
+git commit -m "Preparado para Render"
+git push origin main
+
+5. Crea el servicio en Render
+1. Entra en https://render.com
+2. Inicia sesión con GitHub.
+3. Pulsa New + → Web Service.
+4. Selecciona tu repositorio.
+5. Configura:
+	Environment: Docker
+	Branch: main
+	Region: la más cercana a tus usuarios.
+6. Pulsa Create Web Service.
+
+6. Espera al despliegue
+
+Render:
+
+	Clonará el repositorio.
+	Construirá la imagen Docker.
+	Arrancará tu aplicación Spring Boot.
+	Te asignará una URL pública del tipo:
+	
+https://mi-api.onrender.com
+https://demo-68k7.onrender.com/
+
+
+7. Probar la API
+
+Si tienes un controlador:
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+
+    @GetMapping("/hello")
+    public String hello() {
+        return "Hola";
+    }
+}
+
+Podrás acceder a:
+https://mi-api.onrender.com/api/hello
+https://demo-68k7.onrender.com/api/hello
+

@@ -77,7 +77,55 @@ public class HelloController {
     }
 }
 
+
+1. API Spring Boot en Render
+
+Supongamos que tu API tiene este endpoint:
+
+@RestController
+@RequestMapping("/api/clientes")
+public class ClienteController {
+
+    @GetMapping
+    public List<String> listar() {
+        return List.of(
+            "Juan",
+            "María",
+            "Pedro"
+        );
+    }
+}
+
+
 Podrás acceder a:
 https://mi-api.onrender.com/api/hello
 https://demo-68k7.onrender.com/api/hello
+https://demo-68k7.onrender.com/api/clientes
 
+
+2. Configurar CORS en Spring Boot
+
+Como Angular estará en Firebase y la API en otro dominio, debes permitir CORS:
+
+
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                           "https://miapp.web.app",
+                           "https://miapp.firebaseapp.com"
+                        )
+                        .allowedMethods("*");
+            }
+        };
+    }
+}
+
+En Render defines:
+CORS_ALLOWED_ORIGINS=https://miapp.web.app,https://miapp.firebaseapp.com,https://password-reset-portal-n17kp.web.app

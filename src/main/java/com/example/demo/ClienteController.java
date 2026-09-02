@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -11,12 +9,32 @@ import java.util.List;
 public class ClienteController {
 
     @GetMapping
-    public List<String> listar() {
+    public List<Cliente> listar() {
         return List.of(
-                "Juan",
-                "María",
-                "Pedro"
+                new Cliente(1L, "Juan Pérez"),
+                new Cliente(2L, "María García")
         );
     }
-}
 
+    @GetMapping("/{id}")
+    public Cliente obtener(@PathVariable Long id) {
+        return new Cliente(id, "Cliente " + id);
+    }
+
+    @PostMapping
+    public Cliente crear(@RequestBody Cliente cliente) {
+        return cliente;
+    }
+
+    @PutMapping("/{id}")
+    public Cliente actualizar(
+            @PathVariable Long id,
+            @RequestBody Cliente cliente) {
+
+        return new Cliente(id, cliente.nombre());
+    }
+
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id) {
+    }
+}
